@@ -156,3 +156,4 @@ $router->get('/medical-records', 'MedicalRecords::index');
 // HEALTH CHECK
 // ========================
 $router->get('/healthz', 'Health::index');
+$router->get('/healthz/db', 'Health::db');

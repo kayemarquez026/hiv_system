@@ -7,4 +7,17 @@ class Health extends Controller {
         echo 'ok';
         return;
     }
+
+    public function db() {
+        header('Content-Type: text/plain');
+        try {
+            $db = new Database('main');
+            $db->raw('SELECT 1');
+            echo 'db: ok';
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo 'db: error - ' . $e->getMessage();
+        }
+        return;
+    }
 }
