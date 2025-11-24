@@ -1,42 +1,8 @@
 services:
-  - type: web
-    name: hiv-system
-    env: docker
-    rootDir: .
-    dockerfilePath: ./Dockerfile
-    plan: free
-    autoDeploy: true
-    healthCheckPath: /
-    envVars:
-      - key: APP_ENV
-        value: production
-      - key: BASE_URL
-        value: https://hiv-system.onrender.com
-      # Database (set these in Render dashboard or use Render MySQL add-on)
-      - key: DB_DRIVER
-        value: mysql
-      - key: DB_HOST
-        sync: false
-      - key: DB_PORT
-        value: "3306"
-      - key: DB_USERNAME
-        sync: false
-      - key: DB_PASSWORD
-        sync: false
-      - key: DB_DATABASE
-        sync: false
-      # SMTP (Gmail example: use App Password)
-      - key: SMTP_HOST
-        value: smtp.gmail.com
-      - key: SMTP_USER
-        sync: false
-      - key: SMTP_PASS
-        sync: false
-      - key: SMTP_PORT
-        value: "587"
-      - key: SMTP_CRYPTO
-        value: tls
-      - key: ADMIN_EMAIL
-        sync: false
-      - key: CLINIC_NAME
-        value: Purple Rain Clinic
+	- type: web
+		name: hiv-system
+		runtime: docker
+		envVars:
+			- key: APP_ENV
+				value: production
+		healthCheckPath: /

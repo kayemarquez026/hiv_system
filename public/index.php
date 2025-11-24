@@ -1,8 +1,4 @@
 <?php
-define('ROOTPATH', dirname(__DIR__) . '/');
-
-require_once ROOTPATH . 'vendor/autoload.php';
-require_once ROOTPATH . 'system/core/boot.php';
-
-$app = new System\Core\Application();
-$app->run();
+// Public front controller delegates to root index without altering design.
+// Keeps compatibility when host sets document root to /public.
+require_once dirname(__DIR__) . '/index.php';
