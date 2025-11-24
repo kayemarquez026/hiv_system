@@ -64,7 +64,7 @@ $config['VERSION']                 = '4.2.4';
 | -------------------------------------------------------------------
 | Values: development and production
 */
-$config['ENVIRONMENT']             = 'development';
+$config['ENVIRONMENT']             = getenv('APP_ENV') ?: 'production';
 /*
 |--------------------------------------------------------------------------
 | Base Site URL
@@ -78,7 +78,18 @@ $config['ENVIRONMENT']             = 'development';
 | WARNING: You MUST set this value!
 |
 */
-$config['base_url'] = 'https://hiv-system.onrender.com';
+// Prefer environment-provided URL (Render sets RENDER_EXTERNAL_URL).
+$baseUrl = getenv('BASE_URL') ?: getenv('RENDER_EXTERNAL_URL');
+if (!empty($baseUrl)) {
+	$config['base_url'] = rtrim($baseUrl, '/') . '/';
+} else {
+	// Best-effort detection
+	$isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+		|| (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+	$scheme = $isHttps ? 'https' : 'http';
+	$host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
+	$config['base_url'] = $scheme . '://' . $host . '/';
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -230,7 +241,10 @@ $config['sess_expire_on_close']    = FALSE;
 $config['cookie_prefix']           = '';
 $config['cookie_domain']           = '';
 $config['cookie_path']             = '/';
-$config['cookie_secure']           = FALSE;
+$isHttpsCookie = (strpos($config['base_url'], 'https://') === 0)
+	|| (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+	|| (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+$config['cookie_secure']           = $isHttpsCookie ? TRUE : FALSE;
 $config['cookie_expiration']       = 86400;
 $config['cookie_httponly']         = FALSE;
 $config['cookie_samesite']         = 'Lax';
@@ -302,26 +316,22 @@ $config['csrf_regenerate']         = FALSE;
 |--------------------------------------------------------------------------
 | Email / SMTP Settings
 |--------------------------------------------------------------------------
+| These are now configured in app/config/smtp.php and sourced from
+| environment variables in production. Keep this section empty here
+| to avoid duplicate definitions.
 */
-
-// Gmail SMTP (App password required)
-$config['smtp_host']   = 'smtp.gmail.com';
-$config['smtp_user']   = 'ylaganannalyzha@gmail.com';       // Sender Gmail
-$config['smtp_pass']   = 'ztkj adox ijru utiw';             // Gmail App Password
-$config['smtp_port']   = 587;
-$config['smtp_crypto'] = 'tls';                             // PHPMailer expects: tls or ssl
-
-// Admin who receives notifications
-$config['admin_email'] = 'annalyzhaylagan15@gmail.com';
-
-// Clinic Display Name
-$config['clinic_name'] = 'Purple Rain Clinic';
 
 
 //
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+if ($config['ENVIRONMENT'] === 'development') {
+	ini_set('display_errors', 1);
+	ini_set('display_startup_errors', 1);
+	error_reporting(E_ALL);
+} else {
+	ini_set('display_errors', 0);
+	ini_set('display_startup_errors', 0);
+	error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT & ~E_WARNING);
+}
 
 
 ?>
