@@ -10,11 +10,16 @@ AddDefaultCharset UTF-8
 
     # --------------------------------------------------
     # Deny access to sensitive directories
-    RedirectMatch 403 ^/(app|scheme|console|runtime)/
+    RedirectMatch 403 ^/(app|scheme|console|runtime|vendor)/
 
     # --------------------------------------------------
     # Deny access to sensitive files
-    <FilesMatch "\.(env|json|xml|log|md|lock|git|ini|bak|sql)$">
+    <FilesMatch "\.(env|json|xml|log|md|lock|git|ini|bak|sql|phar)$">
+        Require all denied
+    </FilesMatch>
+
+    # Block composer files explicitly
+    <FilesMatch "^composer\.(json|lock)$">
         Require all denied
     </FilesMatch>
 

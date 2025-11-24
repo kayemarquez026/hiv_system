@@ -151,3 +151,8 @@ $router->post('/profile/update', 'Profile::update');
 
 // Medical Records Routes
 $router->get('/medical-records', 'MedicalRecords::index');
+
+// ========================
+// HEALTH CHECK
+// ========================
+$router->get('/healthz', 'Health::index');
